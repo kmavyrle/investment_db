@@ -1,0 +1,8 @@
+numpy
+pandas
+plotly
+streamlit
+yfinance
+scipy
+cvxpy
+google-api-python-client
