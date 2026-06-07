@@ -9,7 +9,7 @@ import os
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import ai_lib
+#import ai_lib
 
 #from saber import PerformanceAnalytics as pa
 import DataMgmt as dm
@@ -505,61 +505,6 @@ elif page == "Equity Fundamentals":
                     stab_fig.update_yaxes(title_text="Net Debt / EBITDA", secondary_y=True)
                     st.plotly_chart(stab_fig, use_container_width=True)
 
-        # --- Earnings Transcripts ---
-        with st.container(border=True):
-            st.subheader("Earnings Transcripts")
-
-            transcript_path = r"C:\Users\kmavy\Documents\mydocs\Investments\data_lake\raw\fundamental\equities"
-            transcript_files = [f for f in os.listdir(transcript_path) if f.endswith('_earnings_transcripts.csv')]
-
-            if transcript_files:
-                all_transcripts = pd.concat([
-                    pd.read_csv(os.path.join(transcript_path, f))
-                    for f in transcript_files
-                ], ignore_index=True)
-                all_transcripts = all_transcripts.drop(columns=['Unnamed: 0'], errors='ignore')
-                all_transcripts['date'] = pd.to_datetime(all_transcripts['date'], format='mixed', utc=True).dt.tz_localize(None)
-                ticker_transcripts = all_transcripts[all_transcripts['ticker'].isin(selected_tickers)]
-
-                if ticker_transcripts.empty:
-                    st.info("No earnings transcripts found for selected ticker(s).")
-                else:
-                    t_col1, t_col2, t_col3 = st.columns(3)
-                    with t_col1:
-                        transcript_ticker = st.selectbox("Ticker", sorted(ticker_transcripts['ticker'].unique()), key="transcript_ticker")
-                    tk_transcripts = ticker_transcripts[ticker_transcripts['ticker'] == transcript_ticker].sort_values('date', ascending=False)
-                    with t_col2:
-                        transcript_options = [f"Q{row['quarter']} {row['year']} — {row['date'].strftime('%Y-%m-%d') if pd.notna(row['date']) else ''}" for _, row in tk_transcripts.iterrows()]
-                        selected_transcript_idx = st.selectbox("Quarter", range(len(transcript_options)), format_func=lambda i: transcript_options[i], key="transcript_quarter")
-                    with t_col3:
-                        st.metric("Latest Quarter", transcript_options[0] if transcript_options else "N/A")
-
-                    selected_row = tk_transcripts.iloc[selected_transcript_idx]
-                    st.markdown(f"**{transcript_ticker} — Q{selected_row['quarter']} {selected_row['year']}**")
-                    st.text_area("Transcript", value=selected_row['transcript'], height=400, key="transcript_text", disabled=True)
-
-                    st.divider()
-                    st.markdown("**AI Analysis**")
-                    ai_prompt = st.text_area(
-                        "Enter your prompt (will be prepended to the transcript)",
-                        placeholder="e.g. Summarise the key risks mentioned in this earnings call.",
-                        height=100,
-                        key="ai_prompt_input"
-                    )
-                    if st.button("Analyze Transcript", key="ai_analyze_btn"):
-                        if ai_prompt.strip():
-                            full_prompt = f"{ai_prompt.strip()}\n\n{selected_row['transcript']}"
-                            with st.spinner("Thinking..."):
-                                ai_response = alib.ask(full_prompt)
-                            st.session_state["ai_transcript_response"] = ai_response
-                        else:
-                            st.warning("Please enter a prompt before analyzing.")
-
-                    if "ai_transcript_response" in st.session_state:
-                        st.markdown("**Response:**")
-                        st.markdown(st.session_state["ai_transcript_response"])
-            else:
-                st.info("No transcript files found in data lake.")
 
         with eq_tab_valuation:
             key_ratios = ['PE_Ratio', 'Price_to_Book', 'Price_to_Revenue', 'EV_EBITDA', 'FCF_Yield','cur_ratio','cash_conversion_cycle','net_debt_to_shrhldr_eqty','tce_ratio','tot_debt_to_tot_cap','total_debt_to_ev']
