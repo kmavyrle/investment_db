@@ -31,8 +31,8 @@ st.set_page_config(
 
 ### Create Key Classes
 dl = dm.DataLake()
-read_path = r"data_lake\raw\fundamental\equities"
-eq_csv_files = [f for f in os.listdir(read_path) if f.endswith('_full_acc_data.csv')]
+read_path = "data_lake/raw/fundamental/equities"
+eq_csv_files = [f for f in os.listdir(read_path) if f.endswith("_full_acc_data.csv")]
 universe_map = {f.replace('_full_acc_data.csv', '').replace('_', ' ').upper(): f for f in eq_csv_files}
 universe_options = ['All'] + sorted(universe_map.keys())
 
