@@ -48,11 +48,7 @@ with st.sidebar:
     # Navigation
     st.subheader("Navigation")
     
-    if st.button("Price Monitor", use_container_width=True):
-        st.session_state.page = "Price Monitor"
-    
-    if st.button("Macro", use_container_width=True):
-        st.session_state.page = "Macro"
+
 
     if st.button("Equity Fundamentals", use_container_width=True):
         st.session_state.page = "Equity Fundamentals"
@@ -65,7 +61,7 @@ with st.sidebar:
     
     # Initialize page if not set
     if 'page' not in st.session_state:
-        st.session_state.page = "Price Monitor"
+        st.session_state.page = "Equity Fundamentals"
 
     page = st.session_state.page
 
