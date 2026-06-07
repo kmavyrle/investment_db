@@ -27,7 +27,7 @@ st.set_page_config(
     layout="wide"
 )
 
-alib = ai_lib.mkAI()
+#alib = ai_lib.mkAI()
 
 ### Create Key Classes
 dl = dm.DataLake()
